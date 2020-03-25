@@ -1,14 +1,16 @@
 package com.keyin.algorithms.data_structures.test;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.*;
+
+import org.junit.Test;
+
+import com.keyin.algorithms.data_structures.Queue;
 import com.keyin.algorithms.data_structures.test.common.JavaCollectionTest;
 import com.keyin.algorithms.data_structures.test.common.QueueTest;
 import com.keyin.algorithms.data_structures.test.common.Utils;
 import com.keyin.algorithms.data_structures.test.common.Utils.TestData;
-import org.junit.Test;
-
-import java.util.*;
-
-import static org.junit.Assert.assertTrue;
 
 public class QueueTests {
 
@@ -21,9 +23,9 @@ public class QueueTests {
         Collection<Integer> aCollection = aQueue.toCollection();
 
         assertTrue(QueueTest.testQueue(aQueue, aName,
-                                       data.unsorted, data.invalid));
+                data.unsorted, data.invalid));
         assertTrue(JavaCollectionTest.testCollection(aCollection, Integer.class, aName,
-                                                     data.unsorted, data.sorted, data.invalid));
+                data.unsorted, data.sorted, data.invalid));
 
         // Specific test based on bug
         aQueue = new Queue.ArrayQueue<Integer>();
@@ -45,12 +47,12 @@ public class QueueTests {
         Queue.LinkedQueue<Integer> lQueue = new Queue.LinkedQueue<Integer>();
         Collection<Integer> lCollection = lQueue.toCollection();
 
-        Queue<Integer> queue = new LinkedList();
+        java.util.Queue<Integer> queue = new LinkedList();
         queue.offer(1);
         queue.offer(2);
         Integer s = queue.poll();
 
-        Queue<Integer> queue1 = new PriorityQueue<>();
+        java.util.Queue<Integer> queue1 = new PriorityQueue<>();
         queue1.offer(1);
         queue1.offer(5);
         queue1.offer(8);
@@ -61,9 +63,9 @@ public class QueueTests {
 
 
         assertTrue(QueueTest.testQueue(lQueue, lName,
-                                       data.unsorted, data.invalid));
+                data.unsorted, data.invalid));
         assertTrue(JavaCollectionTest.testCollection(lCollection, Integer.class, lName,
-                                                     data.unsorted, data.sorted, data.invalid));
+                data.unsorted, data.sorted, data.invalid));
 
         lQueue = new Queue.LinkedQueue<Integer>();
         for (int i = 0; i < 1024; i++) {

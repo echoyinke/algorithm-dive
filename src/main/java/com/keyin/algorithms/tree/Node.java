@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Node {
     int data;
+
     Node right;
     Node left;
 
@@ -16,5 +17,20 @@ public class Node {
         this.data = data;
         this.left = null;
         this.right = null;
+    }
+
+    @Override
+    public String toString() {
+        if (null == this) {
+            return "null";
+        }
+        String leftPart = (null == left ? "null" : String.valueOf(left.data));
+        String rightPart = (null == right ? "null" : String.valueOf(right.data));
+
+        return "Node{" +
+                "data=" + data +
+                ", left=" + leftPart +
+                ", right=" + rightPart +
+                "}";
     }
 }

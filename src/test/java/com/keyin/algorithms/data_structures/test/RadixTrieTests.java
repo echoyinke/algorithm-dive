@@ -5,8 +5,8 @@ import com.keyin.algorithms.data_structures.test.common.JavaMapTest;
 import com.keyin.algorithms.data_structures.test.common.MapTest;
 import com.keyin.algorithms.data_structures.test.common.Utils;
 import com.keyin.algorithms.data_structures.test.common.Utils.TestData;
+import com.sun.istack.internal.NotNull;
 import junit.framework.Assert;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
