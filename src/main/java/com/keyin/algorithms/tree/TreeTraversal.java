@@ -4,6 +4,8 @@ package com.keyin.algorithms.tree;
 import org.junit.Assert;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *       1
@@ -21,6 +23,8 @@ import java.util.*;
  * 后序遍历(DFS)：4  7  8  5  2  6  3  1
  * <p>
  * 层次遍历(BFS)：1  2  3  4  5  6  7  8
+ *
+ * 垂直遍历（vertical）从左到右，从上到下一列一列来，[4],[2,7],[1,5], [3,8],[6]
  **/
 public class TreeTraversal {
     static Node root;
@@ -29,6 +33,7 @@ public class TreeTraversal {
     static List<Integer> postOrderList = Arrays.asList(4, 7, 8, 5, 2, 6, 3, 1);
     static List<Integer> levelOrderList = Arrays.asList(1 , 2 , 3 , 4  ,5 , 6 , 7 , 8);
     static List<Integer> res = new ArrayList<>();
+    static HashMap<Integer, List<Integer>> map = new HashMap<>();
 
 
     static {
@@ -79,13 +84,13 @@ public class TreeTraversal {
         Stack<Node> stack = new Stack<>();
         stack.push(node);
         while (!stack.empty()){
-            Node curNode = stack.pop();
-            res.add(curNode.data);
-            if (curNode.right != null) {
-                stack.push(curNode.right);
+            Node currNode = stack.pop();
+            res.add(currNode.data);
+            if(currNode.right!=null) {
+                stack.push(currNode.right);
             }
-            if (curNode.left != null) {
-                stack.push(curNode.left);
+            if (currNode.left != null) {
+                stack.push(currNode.left);
             }
         }
 
@@ -101,22 +106,24 @@ public class TreeTraversal {
         inOrderTraversal(node.right);
 
     }
+
+    // (left, root, right)
     public void inOrderNonRecur(Node node) {
 
         if (node == null) {
             return;
         }
-        Node curr = node;
         Stack<Node> stack = new Stack<>();
-        while (curr != null || !stack.isEmpty()) {
-            while (curr != null) {
-                stack.push(curr);
-                curr = curr.left;
+        while(!stack.empty() || node!=null) {
+            while (node!=null) {
+                stack.push(node);
+                node = node.left;
             }
-            curr = stack.pop();
-            res.add(curr.data);
-            curr = curr.right;
+            Node currNode = stack.pop();
+            res.add(currNode.data);
+            node = currNode.right;
         }
+
     }
 
     void postOrderTraversal(Node node) {
@@ -169,27 +176,43 @@ public class TreeTraversal {
 
     }
 
+
+    // like preOrder -> (root, left, right) , postOrder->(left, right, root),
+    // 我们先参考 preOrder 输出（root, right, left）,然后 reverse
     public void posOrder(Node head) {
         if (head == null) {
             return;
         }
-        Stack<Node> s1 = new Stack<Node>();
-        Stack<Node> s2 = new Stack<Node>();
-        s1.push(head);
-        while (!s1.isEmpty()) {
-            Node cur = s1.pop();
-            s2.push(cur);
+        Stack<Node> stack = new Stack<>();
+        stack.push(head);
+        while (!stack.isEmpty()) {
+            Node cur = stack.pop();
+            res.add(cur.data);
             if (cur.left != null) {
-                s1.push(cur.left);
+                stack.push(cur.left);
             }
             if (cur.right != null) {
-                s1.push(cur.right);
+                stack.push(cur.right);
             }
         }
-        while (!s2.isEmpty()) {
-            Node cur = s2.pop();
-            System.out.println(cur.data);
+        Collections.reverse(res);
+
+    }
+
+    public void verticalTraversal(Node node, int dist) {
+        if (node == null) {
+            return;
         }
+        if (map.containsKey(dist)) {
+            map.get(dist).add(node.data);
+        } else {
+            List<Integer> tmp = new ArrayList<>();
+            tmp.add(node.data);
+            map.put(dist, tmp);
+        }
+        verticalTraversal(node.left, dist-1);
+        verticalTraversal(node.right, dist+1);
+
     }
 
     public static void main(String[] args) {
@@ -201,6 +224,7 @@ public class TreeTraversal {
         Assert.assertArrayEquals(res.toArray(), preOrderList.toArray());
         res.clear();
         traversal.inOrderNonRecur(root);
+        Assert.assertArrayEquals(res.toArray(), inOrderList.toArray());
         res.clear();
         traversal.postOrderNonRecur(root);
         Assert.assertArrayEquals(res.toArray(), postOrderList.toArray());
@@ -211,6 +235,11 @@ public class TreeTraversal {
         traversal.levelOrderTraversal(root);
         Assert.assertArrayEquals(res.toArray(), levelOrderList.toArray());
         res.clear();
+
+        traversal.verticalTraversal(root, 0);
+        res.clear();
+        List<String> list = Stream.of("foo", "bar")
+                .collect(Collectors.toList());
 
     }
 
