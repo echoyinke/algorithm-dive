@@ -752,7 +752,7 @@ public class HashMap<K, V> implements IMap<K,V> {
         }
     }
 
-    private HashMap() { }
+    public HashMap() { }
 
     /**
      * {@inheritDoc}

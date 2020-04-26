@@ -23,14 +23,9 @@ import java.util.List;
  */
 public class Subset {
 
-    public synchronized void test() throws InterruptedException {
-        while (true) {
-            System.out.println(Thread.currentThread().getName());
-        }
-    }
 
     List<List<Integer>> lists = new ArrayList<>();
-    public List<List<Integer>> subsets1(int[] nums) throws NoSuchMethodException {
+    public List<List<Integer>> subsets1(int[] nums) {
         if(nums == null || nums.length ==0){
             return lists;
         }
@@ -44,47 +39,75 @@ public class Subset {
 
     private void process(List<Integer>list, int[] nums, int start){
 
-        lists.add(list);
+        lists.add(new ArrayList<>(list));
+        // 从第一个数判断到最后一个数。
         for(int i = start; i < nums.length; i++){
 
+            // 取出来一个，放入临时结果。
             list.add(nums[i]);
+            // i 为 取的情况。
             process(list, nums, i+1);
+            // i 为不取的情况
             list.remove(list.size()-1);
         }
     }
 
+    public static void preOrderProc(int[] nums, int i, ArrayList<Integer> subset, List<List<Integer>> res) {
+        if (i >= nums.length) {
+           return;
+        }
+        res.add(new ArrayList<>(subset));
+        preOrderProc(nums, i+1, subset, res);
+        subset.add(nums[i]);
+        preOrderProc(nums, i+1, subset, res);
+    }
+
+
+    /**
+     * DFS，中序遍历
+     */
+    public  void inOrder(int[] nums, int i, ArrayList<Integer> subset, List<List<Integer>> res) {
+        if (i >= nums.length) return;
+        subset = new ArrayList<Integer>(subset);
+
+        inOrder(nums, i + 1, subset, res);
+        subset.add(nums[i]);
+
+
+        // 因为 subset 是引用，所以加值之后就变右子树。
+        res.add(subset);
+        inOrder(nums, i + 1, subset, res);
+    }
+
+    public List<List<Integer>> binaryBit(int[] nums) {
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        for (int i = 0; i < (1 << nums.length); i++) {
+            List<Integer> sub = new ArrayList<Integer>();
+            for (int j = 0; j < nums.length; j++) {
+                int iRMj= i>>j;
+                int resultAnd1 = iRMj&1;
+                if (resultAnd1 == 1) {
+                    sub.add(nums[j]);
+                }
+
+            }
+            res.add(sub);
+        }
+        return res;
+    }
+
+
+
 
 
     public static void main(String[] args) {
-        Thread t1 = new Thread(() -> {
-            Subset s = new Subset();
-            try {
-                s.test();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
+       Subset subset = new Subset();
+       List<List<Integer>> res = subset.subsets1(new int[]{1, 2, 3});
+        List<List<Integer>> res2 = new ArrayList<>();
+       subset.inOrder(new int[]{1,2}, 0, new ArrayList<Integer>(), res2);
+        List<List<Integer>> res3 = subset.binaryBit(new int[]{1,2,3});
 
-
-        Thread t2 = new Thread(() -> {
-            Subset s = new Subset();
-            try {
-                s.test();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-
-        t1.start();
-        t2.start();
-        int[] arr = new int[] {1,2,3};
-        Subset subset = new Subset();
-        String a = "abc";
-        String b = "abc";
-        String c = new String("abc");
-        List<String> s = new ArrayList<>();
-        List<Integer> in = new ArrayList<>();
-        int i=1;
+       int i = 1;
 
 
     }
