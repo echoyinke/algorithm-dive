@@ -67,6 +67,18 @@ public class TreeTraversal {
         }
 
     }
+    
+    void levelOrderByHand() {
+        
+        LinkedList<Node> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            Node node = queue.poll();
+            
+        }
+        
+        
+    }
 
 
     void preOrderTraversal(Node node) {
