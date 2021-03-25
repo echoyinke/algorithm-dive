@@ -4,6 +4,8 @@ package com.keyin.algorithms.tree;
 import org.junit.Assert;
 
 import java.util.*;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,6 +24,7 @@ import java.util.stream.Stream;
  * <p>
  * 后序遍历(DFS)：4  7  8  5  2  6  3  1
  * <p>
+ * noted: 
  * 层次遍历(BFS)：1  2  3  4  5  6  7  8
  *
  * 垂直遍历（vertical）从左到右，从上到下一列一列来，[4],[2,7],[1,5], [3,8],[6]
@@ -67,20 +70,8 @@ public class TreeTraversal {
         }
 
     }
-    
-    void levelOrderByHand() {
-        
-        LinkedList<Node> queue = new LinkedList<>();
-        queue.add(root);
-        while (!queue.isEmpty()) {
-            Node node = queue.poll();
-            
-        }
-        
-        
-    }
 
-
+    // 树的尽头，左右节点是null,  只有一个节点的话，null-> root -> null
     void preOrderTraversal(Node node) {
         if (node == null) {
             return;
