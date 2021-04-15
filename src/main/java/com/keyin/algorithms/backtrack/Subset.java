@@ -46,7 +46,7 @@ public class Subset {
             // 取出来一个，放入临时结果。
             list.add(nums[i]);
             // i 为 取的情况。
-            process(list, nums, i+1);
+            process(list, nums, i+1);// 
             // i 为不取的情况
             list.remove(list.size()-1);
         }
@@ -102,7 +102,7 @@ public class Subset {
 
     public static void main(String[] args) {
        Subset subset = new Subset();
-       List<List<Integer>> res = subset.subsets1(new int[]{1, 2, 3});
+       List<List<Integer>> res = subset.subsets1(new int[]{5, 6, 7});
         List<List<Integer>> res2 = new ArrayList<>();
        subset.inOrder(new int[]{1,2}, 0, new ArrayList<Integer>(), res2);
         List<List<Integer>> res3 = subset.binaryBit(new int[]{1,2,3});
