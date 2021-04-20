@@ -2,9 +2,11 @@ package com.keyin.multithread;
 
 import lombok.SneakyThrows;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @description: 三个不同的线程 A、B、C 将会共用一Foo实例。
@@ -56,6 +58,8 @@ import java.util.concurrent.Semaphore;
  * @create: 2021-03-22 23:15
  **/
 public class PrintInOrder {
+    
+    /*方法一: 信号量*/
     static class Foo {
         Semaphore semaphore1 = new Semaphore(1);
         Semaphore semaphore2 = new Semaphore(1);
@@ -83,10 +87,144 @@ public class PrintInOrder {
             semaphore2.release();
         }
     }
+    /*方法一: cyclicBarrier*/
+    static class Foo3 {
+        CountDownLatch countDownLatch12 = new CountDownLatch(1);
+        CountDownLatch countDownLatch23 = new CountDownLatch(1);
+        public Foo3() {
+
+        }
+
+        public void first(Runnable printFirst) throws InterruptedException {
+            
+            // printFirst.run() outputs "first". Do not change or remove this line.
+            printFirst.run();
+            countDownLatch12.countDown();
+        }
+
+        public void second(Runnable printSecond) throws InterruptedException {
+            // printSecond.run() outputs "second". Do not change or remove this line.
+            countDownLatch12.await();
+            printSecond.run();
+            countDownLatch23.countDown();
+        }
+
+        public void third(Runnable printThird) throws InterruptedException {
+            countDownLatch23.await();
+            // printThird.run() outputs "third". Do not change or remove this line.
+            printThird.run();
+            countDownLatch23.countDown();
+        }
+    }
+    
+    
+    /* 方法二: lock 锁 */
+    static class Foo2 {
+
+        int num = 1;
+        ReentrantLock lock;
+        //精确的通知和唤醒线程
+        Condition condition1, condition2, condition3;
+
+        public Foo2() {
+            lock = new ReentrantLock();
+            condition1 = lock.newCondition();
+            condition2 = lock.newCondition();
+            condition3 = lock.newCondition();
+        }
+
+        public void first(Runnable printFirst) throws InterruptedException {
+              
+                // printFirst.run() outputs "first". Do not change or remove this line.
+            while (num != 1) {
+                lock.lock();
+                try {
+                    condition1.wait();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    lock.unlock();
+                }
+            }
+            printFirst.run();
+            num = 2;
+          
+        }
+
+        public void second(Runnable printSecond) throws InterruptedException {
+            while (num != 2) {
+                lock.lock();
+                try {
+                    condition2.wait();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    lock.unlock();
+                }
+            }
+            
+            // printSecond.run() outputs "second". Do not change or remove this line.
+            printSecond.run();
+            num = 3;
+            condition2.signal();
+            
+        }
+
+        public void third(Runnable printThird) throws InterruptedException {
+            lock.lock();
+            try {
+                condition3.await();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                lock.unlock();
+            }
+            
+            // printSecond.run() outputs "second". Do not change or remove this line.
+            printThird.run();
+            num = 1;
+            condition3.signal();
+        }
+    }
+
+
+    static class Foo4 {
+        BlockingQueue<String> blockingQueue12, blockingQueue23;
+
+        public Foo4() {
+            //同步队列,没有容量，进去一个元素，必须等待取出来以后，才能再往里面放一个元素
+            blockingQueue12 = new SynchronousQueue<>();
+            blockingQueue23 = new SynchronousQueue<>();
+        }
+
+        public void first(Runnable printFirst) throws InterruptedException {
+
+            // printFirst.run() outputs "first". Do not change or remove this line.
+            printFirst.run();
+            blockingQueue12.put("stop");
+        }
+
+        public void second(Runnable printSecond) throws InterruptedException {
+            blockingQueue12.take();
+            // printSecond.run() outputs "second". Do not change or remove this line.
+            printSecond.run();
+            blockingQueue23.put("stop");
+        }
+
+        public void third(Runnable printThird) throws InterruptedException {
+            blockingQueue23.take();
+            // printThird.run() outputs "third". Do not change or remove this line.
+            printThird.run();
+        }
+    }
+    
+
+
     
 
     public static void main(String[] args) {
-        Foo foo = new Foo();
+        
+        Foo2 foo = new Foo2();
         ExecutorService executorService = Executors.newFixedThreadPool(3);
         executorService.submit(() -> {
             try {
@@ -97,14 +235,14 @@ public class PrintInOrder {
         });
         executorService.submit(() -> {
             try {
-                foo.first(() -> { System.out.println("second");});
+                foo.second(() -> { System.out.println("second");});
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
         executorService.submit(() -> {
             try {
-                foo.first(() -> { System.out.println("third");});
+                foo.third(() -> { System.out.println("third");});
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

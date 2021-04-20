@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *         }
  *     }两个线程公用一个FooBar实例， 按顺序打印
  * 
- * 两个不同的线程将会共用一个 FooBar 实例。其中一个线程将会调用 foo() 方法，另一个线程将会调用 bar() 方法。
+ * 两个不同的线程将会共用一个 FooBar实例。其中一个线程将会调用foo()方法，另一个线程将会调用bar()方法。
  * 
  *
  * 请设计修改程序，以确保 "foobar" 被输出 n 次。
@@ -129,7 +129,6 @@ public class FooBar {
         fooBar.setN(5);
  
         Executor executor = Executors.newFixedThreadPool(2);
-        //登哥最大牌，到的最晚
         executor.execute(new Runnable() {
             @SneakyThrows
             @Override

@@ -1,4 +1,4 @@
-package com.keyin.javalang;
+package com.keyin.javalang.threadlocal;
 
 import static java.lang.Thread.sleep;
 

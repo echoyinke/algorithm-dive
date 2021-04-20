@@ -1,4 +1,4 @@
-package com.keyin.javalang;
+package com.keyin.javalang.innerclass;
 
 import com.keyin.javalang.annotatioin.MyAnnotation;
 
