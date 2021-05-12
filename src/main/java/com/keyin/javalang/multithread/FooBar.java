@@ -1,4 +1,4 @@
-package com.keyin.multithread;
+package com.keyin.javalang.multithread;
 
 import lombok.SneakyThrows;
 

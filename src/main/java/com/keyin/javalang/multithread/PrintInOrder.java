@@ -1,11 +1,7 @@
-package com.keyin.multithread;
-
-import lombok.SneakyThrows;
+package com.keyin.javalang.multithread;
 
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
