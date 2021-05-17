@@ -1,5 +1,7 @@
 package com.keyin.algorithms.search;
 
+import org.springframework.util.Assert;
+
 /**
  * In computer science, binary search, also known as half-interval search or logarithmic search, is a search algorithm that finds the position of a target value within a sorted array. Binary search 
  * compares the target value to the middle element of the array; if they are unequal, the half in which the target cannot lie is eliminated and the search continues on the remaining half until it is 
@@ -108,12 +110,175 @@ public class BinarySearch {
         }
         return Integer.MAX_VALUE;
     }
+    
+    
+    
+    public  static int bsFromScratch(int[] arr, int lowIndex, int highIndex, int target) {
+        int midIndex = (lowIndex + highIndex)>>1;
+        Assert.isTrue(midIndex>=lowIndex, "midIndex should greater than 0");
+        Assert.isTrue(midIndex<= highIndex, "midIndex should lower than highIndex");
+
+        int midVal = arr[midIndex];
+        if (target <= midVal) {
+            highIndex = midIndex;
+        } else {
+            lowIndex = midIndex;
+        }
+        return midVal == target ?  midIndex :  bsFromScratch(arr, lowIndex, highIndex, target);
+    }
+    public  static int bsFromScratch(int[] arr, int target) {
+        int lowIndex = 0;
+        int highIndex = arr.length - 1;
+        return bsFromScratch(arr, lowIndex, highIndex, target);
+    }
+    public  static int bsFromScratch2(int[] arr, int target) {
+        int lowIndex = 0;
+        int highIndex = arr.length - 1;
+        while (lowIndex<=highIndex) {
+            int midIndex = (highIndex - lowIndex)/2;
+            if (target == arr[midIndex]) {
+                return midIndex;
+            }
+            if (arr[midIndex] < target) {
+                lowIndex = midIndex;
+            }
+            if (arr[midIndex] > target) {
+                highIndex = midIndex;
+            }
+        }
+        return -1;
+    }
+    /*
+    * 如上述代码所示，我们根据 nums[mid] 与 target 的大小关系，可以得知 target 是在 mid 的左边还是右边，从而来调整左右边界 lo 和 hi。
+
+但是，对于旋转数组，我们无法直接根据 nums[mid] 与 target 的大小关系来判断 target 是在 mid 的左边还是右边，因此需要「分段讨论」。于是方法三呼之欲出！
+
+方法三：先根据 nums[mid] 与 nums[lo] 的关系判断 mid 是在左段还是右段，接下来再判断 target 是在 mid 的左边还是右边，从而来调整左右边界 lo 和 hi。
+
+    * */
+
+    public int search1(int[] nums, int target) {
+        int lo = 0, hi = nums.length - 1, mid = 0;
+        while (lo <= hi) {
+            mid = lo + ((hi - lo) >> 1);
+            if (nums[mid] == target) {
+                return mid;
+            }
+            if (nums[mid] < target) {
+                lo = mid + 1;
+            } else {
+                hi = mid - 1;
+            }
+        }
+        return -1;
+    }
+
+    public static int search2FromScratch(int[] nums, int target) {
+        
+        int low = 0, mid=0;
+        int high = nums.length - 1;
+        
+        
+        while(low <= high) {
+             mid = low + (high - low)/2;
+            if (target == mid) {
+                return nums[mid];
+            }
+            if (target > mid) {
+                low = mid;
+            }
+            if (target < mid) {
+                high = mid;
+            }
+        }
+        return -1;
+
+    }
+    
+    /*
+    * 不管mid是啥，总归有半段是有序的，然后根据有序那半边就可以判断出后续的一个分割方向，就是说二分，你只需要知道不在这一半，
+    * 就肯定在另外一半
+    * */
+    public static int search(int[] nums, int target) {
+        int lo = 0, hi = nums.length - 1, mid = 0;
+        while (lo <= hi) {
+            mid = lo + (hi - lo) / 2;
+            if (nums[mid] == target) {
+                return mid;
+            }
+            // 先根据 nums[mid] 与 nums[lo] 的关系判断 mid 是在左段还是右段
+            // >=则是在左半段
+            if (nums[mid] >= nums[lo]) {
+                // 再判断 target 是在 mid 的左边还是右边，从而调整左右边界 lo 和 hi
+                if (target >= nums[lo] && target < nums[mid]) {
+                    hi = mid - 1;
+                } else {
+                    lo = mid + 1;
+                }
+                
+            } else {
+                // 不然mid在就是右半段，然后至少右半段是递增的，看下target是否在[mid, high]之间
+                if (target > nums[mid] && target <= nums[hi]) {
+                    lo = mid + 1;
+                } else {
+                    hi = mid - 1;
+                }
+            }
+        }
+        return -1;
+    }
+
+    
+    /*
+    * 其实思想是一样的，这里不过是巧妙的先设置最大值，然后后比较，最中还是说让搜索通过排除法进入目标段。
+    * */
+    public static int search3(int[] nums, int target) {
+        int lo = 0, hi = nums.length - 1;
+        while (lo <= hi) {
+            
+            int mid = lo + (hi - lo) / 2;
+            if (nums[mid] == target) {
+                return mid;
+            }
+
+            // 先根据 nums[0] 与 target 的关系判断目标值是在左半段还是右半段
+            if (target >= nums[0]) {
+                // 目标值在左半段时，若 mid 在右半段，则将 mid 索引的值改成 inf
+                if (nums[mid] < nums[0]) {
+                    nums[mid] = Integer.MAX_VALUE;
+                }
+            } else {
+                // 目标值在右半段时，若 mid 在左半段，则将 mid 索引的值改成 -inf
+                if (nums[mid] >= nums[0]) {
+                    nums[mid] = Integer.MIN_VALUE;
+                }
+            }
+
+            if (nums[mid] < target) {
+                lo = mid + 1;
+            } else {
+                hi = mid - 1;
+            }
+        }
+        return -1;
+    }
+    
+
+
+    
 
     public static void main(String[] args) {
         int res = binarySearch(new int[] {1,2,3,5,7,9}, 1);
         System.out.println(res);
-        if (true) {
+        int res2 = bsFromScratch2(new int[] {1,2,3,5,7,9}, 1);
+        System.out.println(res2);
+        int res3 = search2FromScratch(new int[] {1,2,3,5,7,9}, 1);
+        System.out.println(res3);
 
-        }
+        int res4 = search3(new int[] {  7, 8, 9, 0, 1, 2,3, 4, 5, 6}, 9);
+        System.out.println(res4);
+        
+        
+
     }
 }

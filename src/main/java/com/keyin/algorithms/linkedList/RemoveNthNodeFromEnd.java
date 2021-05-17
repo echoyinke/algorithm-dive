@@ -22,7 +22,10 @@ public class RemoveNthNodeFromEnd {
         if (node == null || node.next ==null) {
             return;
         }
-
+        /*
+        *
+        * 这个递归用的绝了
+        * */
         rmNthFromEnd(node.next);
         num++;
         if(num == (target + 1)) {

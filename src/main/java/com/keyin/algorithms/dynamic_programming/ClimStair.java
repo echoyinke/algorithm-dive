@@ -16,7 +16,11 @@ public class ClimStair {
         return ifOneStep+ifTwoStep;
     }
 
-
+    
+    /*
+    * 递归操作，在第n步，要么是通过两步上来，要么是通过一步上来
+    * 
+    * */
     public static  int recurClimb(int n) {
         if (n==1) {
             return 1;
@@ -26,6 +30,11 @@ public class ClimStair {
         }
         return recurClimb(n-1) + recurClimb(n-2);
     }
+    
+    /*
+    * 
+    * 跟递归公式是一样的，只不过是把每个状态都记录下来
+    * */
     public static int dp(int n) {
         int[] dp = new int[n+1];
         dp[0]=0;

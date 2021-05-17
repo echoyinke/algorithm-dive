@@ -23,6 +23,8 @@ package com.keyin.algorithms.array;
  * 示例 2:
  *
  * 给定 nums = [0,1,2,2,3,0,4,2], val = 2,
+ * 
+ * 一般的array问题都是要求in-place, 其实是假想出另外一个array进行交换
  *
  * 函数应该返回新的长度 5, 并且 nums 中的前五个元素为 0, 1, 3, 0, 4。
  *
