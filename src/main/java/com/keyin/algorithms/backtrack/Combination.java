@@ -26,6 +26,7 @@ import java.util.List;
 public class Combination {
     static int n =4;
     static int k=2;
+    static int total;
 
     static List<List<Integer>> output = new ArrayList<>();
 
